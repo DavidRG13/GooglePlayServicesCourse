@@ -15,7 +15,8 @@ import com.google.android.gms.location.LocationServices;
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private GoogleApiClient googleApiClient;
-    private TextView txtLocation;
+    private TextView txtLatitude;
+    private TextView txtLongitude;
     private LocationRequest locationRequest;
 
     @Override
@@ -29,7 +30,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             .addOnConnectionFailedListener(this)
             .build();
 
-        txtLocation = ((TextView) findViewById(R.id.txtLocation));
+        txtLatitude = ((TextView) findViewById(R.id.txtLatitude));
+        txtLongitude = ((TextView) findViewById(R.id.txtLongitude));
     }
 
     @Override
@@ -40,7 +42,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     protected void onStop() {
-        googleApiClient.disconnect();
+        if (googleApiClient.isConnected()) {
+            googleApiClient.disconnect();
+        }
         super.onStop();
     }
 
@@ -83,6 +87,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onLocationChanged(final Location location) {
-        txtLocation.setText(location.toString());
+        if (location != null) {
+            txtLatitude.setText(String.valueOf(location.getLatitude()));
+            txtLongitude.setText(String.valueOf(location.getLongitude()));
+        }
     }
 }
