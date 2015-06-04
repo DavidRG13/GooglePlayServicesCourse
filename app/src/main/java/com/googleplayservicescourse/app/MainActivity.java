@@ -1,72 +1,48 @@
 package com.googleplayservicescourse.app;
 
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.ActivityRecognition;
-import com.google.android.gms.location.DetectedActivity;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener, ResultCallback<Status> {
 
     private GoogleApiClient googleApiClient;
-    private Button requestActivityUpdates;
-    private Button removeActivityUpdates;
-    private TextView detectedActivities;
-    private ActivityDetectionBroadcastReceiver activityDetectionBroadcastReceiver;
+    private ArrayList<Geofence> geoFenceList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        googleApiClient = new GoogleApiClient.Builder(this)
-            .addApi(ActivityRecognition.API)
-            .addConnectionCallbacks(this)
-            .addOnConnectionFailedListener(this)
-            .build();
+        googleApiClient = new GoogleApiClient.Builder(this).addApi(LocationServices.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this).build();
 
-        activityDetectionBroadcastReceiver = new ActivityDetectionBroadcastReceiver();
+        geoFenceList = new ArrayList<>();
+        populateGeofenceList();
 
-        requestActivityUpdates = ((Button) findViewById(R.id.request_activity_updates));
-        requestActivityUpdates.setOnClickListener(this);
-        removeActivityUpdates = ((Button) findViewById(R.id.remove_activity_updates));
-        removeActivityUpdates.setOnClickListener(this);
-        detectedActivities = ((TextView) findViewById(R.id.activities_detected));
+        ((Button) findViewById(R.id.add_geofences)).setOnClickListener(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         googleApiClient.connect();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver(activityDetectionBroadcastReceiver, new IntentFilter(Constants.BROADCAST_ACTION));
-    }
-
-    @Override
-    protected void onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(activityDetectionBroadcastReceiver);
-        super.onPause();
     }
 
     @Override
@@ -113,48 +89,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public void onClick(final View view) {
         int id = view.getId();
-        if (id == R.id.request_activity_updates) {
+        if (id == R.id.add_geofences) {
             if (!googleApiClient.isConnected()) {
-                Toast.makeText(this, R.string.google_api_not_connected, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.google_api_not_connected), Toast.LENGTH_SHORT).show();
+                return;
             }
-            ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(googleApiClient, Constants.DETECTION_INTERVAL, getActivityDetectionPendingIntent()).setResultCallback(this);
-            requestActivityUpdates.setEnabled(false);
-            removeActivityUpdates.setEnabled(true);
-        } else if (id == R.id.remove_activity_updates) {
-            if (!googleApiClient.isConnected()) {
-                Toast.makeText(this, R.string.google_api_not_connected, Toast.LENGTH_LONG).show();
+
+            try {
+                LocationServices.GeofencingApi.addGeofences(
+                    googleApiClient,
+                    getGeofencingRequest(),
+                    getGeofencePendingIntent()
+                ).setResultCallback(this);
+            } catch (SecurityException securityException) {
             }
-            ActivityRecognition.ActivityRecognitionApi.removeActivityUpdates(googleApiClient, getActivityDetectionPendingIntent()).setResultCallback(this);
-            requestActivityUpdates.setEnabled(true);
-            removeActivityUpdates.setEnabled(false);
-        }
-    }
-
-    private PendingIntent getActivityDetectionPendingIntent() {
-        Intent intent = new Intent(this, DetectedActivitiesIntentService.class);
-        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    private String getActivityString(final int detectedActivity) {
-        switch (detectedActivity) {
-            case DetectedActivity.IN_VEHICLE:
-                return getString(R.string.in_vehicle);
-            case DetectedActivity.ON_BICYCLE:
-                return getString(R.string.on_bicycle);
-            case DetectedActivity.ON_FOOT:
-                return getString(R.string.on_foot);
-            case DetectedActivity.RUNNING:
-                return getString(R.string.running);
-            case DetectedActivity.STILL:
-                return getString(R.string.still);
-            case DetectedActivity.TILTING:
-                return getString(R.string.tilting);
-            case DetectedActivity.UNKNOWN:
-                return getString(R.string.unknown);
-            case DetectedActivity.WALKING:
-                return getString(R.string.walking);
-            default:
-                return getString(R.string.unidentifiable_activity);
         }
     }
 
@@ -167,17 +115,25 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
-    public class ActivityDetectionBroadcastReceiver extends BroadcastReceiver {
+    private PendingIntent getGeofencePendingIntent() {
+        Intent intent = new Intent(this, GeoFenceTransitionsIntentService.class);
+        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
 
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            ArrayList<DetectedActivity> activities = intent.getParcelableArrayListExtra(Constants.ACTIVITY_EXTRA);
+    private GeofencingRequest getGeofencingRequest() {
+        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+        builder.addGeofences(geoFenceList);
+        return builder.build();
+    }
 
-            String status = "";
-            for (DetectedActivity activity : activities) {
-                status += getActivityString(activity.getType()) + activity.getConfidence() + "%\n";
-            }
-            detectedActivities.setText(status);
+    private void populateGeofenceList() {
+        for (Map.Entry<String, LatLng> entry : Constants.geofencesCoordinates.entrySet()) {
+            geoFenceList.add(new Geofence.Builder().setRequestId(entry.getKey())
+                .setCircularRegion(entry.getValue().latitude, entry.getValue().longitude, Constants.RADIUS)
+                .setExpirationDuration(Constants.EXPIRATION_DURATION)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
+                .build());
         }
     }
 }

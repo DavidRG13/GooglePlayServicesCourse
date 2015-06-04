@@ -10,21 +10,9 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/request_activity_updates"
+        android:id="@+id/add_geofences"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Request activity updates"/>
-
-    <Button
-        android:id="@+id/remove_activity_updates"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Remove activity updates"/>
-
-    <TextView
-        android:id="@+id/activities_detected"
-        android:text="@string/hello_world"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:text="Add geofences"/>
 
 </LinearLayout>
