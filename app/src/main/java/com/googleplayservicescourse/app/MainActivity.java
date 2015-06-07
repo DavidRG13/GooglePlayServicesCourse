@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -27,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private GoogleApiClient googleApiClient;
     private ArrayList<Geofence> geoFenceList;
+    private Tracker tracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         geoFenceList = new ArrayList<>();
         populateGeofenceList();
 
-        ((Button) findViewById(R.id.add_geofences)).setOnClickListener(this);
+        findViewById(R.id.add_geofences).setOnClickListener(this);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onStart();
         googleApiClient.connect();
 
-        Tracker tracker = ((MyApplication) getApplication()).getTracker();
+        tracker = ((MyApplication) getApplication()).getTracker();
         tracker.setScreenName("MainActivity");
         tracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
@@ -109,8 +109,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     getGeofencingRequest(),
                     getGeofencePendingIntent()
                 ).setResultCallback(this);
-            } catch (SecurityException securityException) {
+            } catch (SecurityException ignored) {
             }
+
+            tracker.send(new HitBuilders.EventBuilder().setCategory("Geofences").setAction("Add geofences").setLabel("Default geofences").build());
         }
     }
 
