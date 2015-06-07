@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             } catch (SecurityException ignored) {
             }
 
-            tracker.send(new HitBuilders.EventBuilder().setCategory("Geofences").setAction("Add geofences").setLabel("Default geofences").build());
+            tracker.send(new HitBuilders.EventBuilder().setCategory("Geofences").setAction("Add geofences").setLabel("Default label for goal purposes").build());
         }
     }
 
