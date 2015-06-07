@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -45,6 +47,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     protected void onStart() {
         super.onStart();
         googleApiClient.connect();
+
+        Tracker tracker = ((MyApplication) getApplication()).getTracker();
+        tracker.setScreenName("MainActivity");
+        tracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @Override
