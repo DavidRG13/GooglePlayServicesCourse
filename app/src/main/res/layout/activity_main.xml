@@ -15,4 +15,10 @@
         android:layout_height="wrap_content"
         android:text="Add geofences"/>
 
+    <Button
+        android:id="@+id/raise_exception"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Raise exception"/>
+
 </LinearLayout>

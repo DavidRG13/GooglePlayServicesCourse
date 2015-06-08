@@ -120,6 +120,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
 
             tracker.send(new HitBuilders.EventBuilder().setCategory("Geofences").setAction("Add geofences").setLabel("Default label for goal purposes").build());
+        } else if (id == R.id.raise_exception) {
+
+            try {
+                throw new NullPointerException();
+            } catch (Exception e) {
+                tracker.send(new HitBuilders.ExceptionBuilder().setDescription(e.getMessage()).setFatal(true).build());
+            }
         }
     }
 
