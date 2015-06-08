@@ -13,14 +13,18 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tagmanager.ContainerHolder;
+import com.google.android.gms.tagmanager.TagManager;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener, ResultCallback<Status> {
 
@@ -42,6 +46,23 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         populateGeofenceList();
 
         findViewById(R.id.add_geofences).setOnClickListener(this);
+        findViewById(R.id.raise_exception).setOnClickListener(this);
+        findViewById(R.id.daily_special).setOnClickListener(this);
+
+
+        TagManager tagManager = ((MyApplication) getApplication()).getTagManager();
+
+        PendingResult<ContainerHolder> pendingResult = tagManager.loadContainerPreferFresh("GTM-M9373G", R.raw.default_container_v2);
+
+        pendingResult.setResultCallback(new ResultCallback<ContainerHolder>() {
+            @Override
+            public void onResult(final ContainerHolder containerHolder) {
+                if (containerHolder.getStatus().isSuccess()) {
+                    containerHolder.refresh();
+                    ((MyApplication) getApplication()).setContainerHolder(containerHolder);
+                }
+            }
+        }, 2, TimeUnit.SECONDS);
     }
 
     @Override
@@ -127,6 +148,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             } catch (Exception e) {
                 tracker.send(new HitBuilders.ExceptionBuilder().setDescription(e.getMessage()).setFatal(true).build());
             }
+        } else if (id == R.id.daily_special) {
+            startActivity(new Intent(this, DailySpecialActivity.class));
         }
     }
 
