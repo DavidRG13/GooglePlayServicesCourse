@@ -22,22 +22,7 @@ public class ToastAdListener extends AdListener {
     @Override
     public void onAdFailedToLoad(final int errorCode) {
         super.onAdFailedToLoad(errorCode);
-        String reason = "";
-        switch (errorCode) {
-            case AdRequest.ERROR_CODE_INTERNAL_ERROR:
-                reason = "Internal error";
-                break;
-            case AdRequest.ERROR_CODE_INVALID_REQUEST:
-                reason = "Invalid request";
-                break;
-            case AdRequest.ERROR_CODE_NETWORK_ERROR:
-                reason = "Network error";
-                break;
-            case AdRequest.ERROR_CODE_NO_FILL:
-                reason = "No fill";
-                break;
-        }
-        showToast(reason);
+        showToast(getErrorReason(errorCode));
     }
 
     @Override
@@ -56,6 +41,25 @@ public class ToastAdListener extends AdListener {
     public void onAdLoaded() {
         super.onAdLoaded();
         showToast("Ad loaded");
+    }
+
+    public String getErrorReason(final int errorCode) {
+        String reason = "";
+        switch (errorCode) {
+            case AdRequest.ERROR_CODE_INTERNAL_ERROR:
+                reason = "Internal error";
+                break;
+            case AdRequest.ERROR_CODE_INVALID_REQUEST:
+                reason = "Invalid request";
+                break;
+            case AdRequest.ERROR_CODE_NETWORK_ERROR:
+                reason = "Network error";
+                break;
+            case AdRequest.ERROR_CODE_NO_FILL:
+                reason = "No fill";
+                break;
+        }
+        return reason;
     }
 
     private void showToast(String message) {

@@ -12,4 +12,6 @@
     <string name="transition_exit">Transition ENTER</string>
     <string name="geofence_transition_notification_text">A new geofence event happened</string>
     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="interstitial_ad_unit_id">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="loading_interstitial">Loading Interstitial</string>
 </resources>
