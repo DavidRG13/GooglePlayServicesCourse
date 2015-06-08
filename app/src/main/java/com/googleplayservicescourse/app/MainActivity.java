@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private GoogleApiClient googleApiClient;
     private ArrayList<Geofence> geoFenceList;
     private Tracker tracker;
+    private long startTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     protected void onStart() {
         super.onStart();
+        startTime = System.nanoTime();
         googleApiClient.connect();
 
         tracker = ((MyApplication) getApplication()).getTracker();
@@ -81,7 +83,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(final Bundle bundle) {
-
+        long elapsedTime = System.nanoTime() - startTime;
+        tracker.send(new HitBuilders.TimingBuilder()
+            .setCategory("connect to play services")
+            .setValue(elapsedTime).setLabel("Play services")
+            .setVariable("duration").build()
+        );
     }
 
     @Override
