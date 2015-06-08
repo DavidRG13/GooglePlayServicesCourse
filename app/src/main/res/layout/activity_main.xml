@@ -27,4 +27,10 @@
         android:layout_height="wrap_content"
         android:text="Show daily special"/>
 
+    <Button
+        android:id="@+id/launch_ads_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Launch Ads Activity"/>
+
 </LinearLayout>

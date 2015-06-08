@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         findViewById(R.id.add_geofences).setOnClickListener(this);
         findViewById(R.id.raise_exception).setOnClickListener(this);
         findViewById(R.id.daily_special).setOnClickListener(this);
+        findViewById(R.id.launch_ads_activity).setOnClickListener(this);
 
 
         TagManager tagManager = ((MyApplication) getApplication()).getTagManager();
@@ -150,6 +151,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         } else if (id == R.id.daily_special) {
             startActivity(new Intent(this, DailySpecialActivity.class));
+        } else if (id == R.id.launch_ads_activity) {
+            startActivity(new Intent(this, AdsActivity.class));
         }
     }
 
