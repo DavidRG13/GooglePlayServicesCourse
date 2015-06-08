@@ -13,6 +13,7 @@ public class BannerActivity extends AppCompatActivity{
         setContentView(R.layout.activity_banner);
 
         final AdView adView = ((AdView) findViewById(R.id.adView));
+        adView.setAdListener(new ToastAdListener(this));
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
     }
