@@ -91,8 +91,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         actualState = STATE_SIGNED_IN;
 
-        Person person = Plus.PeopleApi.getCurrentPerson(googleApiClient);
-        status.setText(String.format("Signed In to G+ as %s", person.getDisplayName()));
+        String accountName = Plus.AccountApi.getAccountName(googleApiClient);
+        status.setText(String.format("Signed In to G+ as %s", accountName));
     }
 
     @Override
@@ -162,7 +162,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             .addConnectionCallbacks(this)
             .addOnConnectionFailedListener(this)
             .addApi(Plus.API, Plus.PlusOptions.builder().build())
-            .addScope(new Scope(Scopes.PROFILE))
+            .addScope(new Scope("email"))
             .build();
     }
 }
