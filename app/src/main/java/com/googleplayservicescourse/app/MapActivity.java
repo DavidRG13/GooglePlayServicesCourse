@@ -1,5 +1,6 @@
 package com.googleplayservicescourse.app;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -8,6 +9,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -71,6 +73,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             .add(kentValleyPosition)
             .add(rentonPosition)
         );
+
+        map.addCircle(new CircleOptions().center(rentonPosition).radius(5000).strokeColor(Color.GREEN).fillColor(Color.argb(64, 0, 255, 0)));
 
         flyTo(SEATTLE);
     }
