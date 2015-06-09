@@ -2,25 +2,17 @@ package com.googleplayservicescourse.app;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    private boolean mapReady;
     private GoogleMap map;
-
-    private static final CameraPosition NYC = CameraPosition.builder()
-        .target(new LatLng(40.7127, 74.0059))
-        .zoom(21)
-        .bearing(0)
-        .tilt(45)
-        .build();
 
     private static final CameraPosition SEATTLE = CameraPosition.builder()
         .target(new LatLng(47.6204, -122.3491))
@@ -28,22 +20,24 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
         .bearing(0)
         .tilt(45)
         .build();
-
-    private static final CameraPosition DUBLIN = CameraPosition.builder()
-        .target(new LatLng(53.3478, 6.2597))
-        .zoom(17)
-        .bearing(90)
-        .tilt(45)
-        .build();
+    private MarkerOptions renton;
+    private MarkerOptions kirkland;
+    private MarkerOptions everett;
+    private MarkerOptions lynnwood;
+    private MarkerOptions montlake;
+    private MarkerOptions kentValley;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        findViewById(R.id.seattleBtn).setOnClickListener(this);
-        findViewById(R.id.nycBtn).setOnClickListener(this);
-        findViewById(R.id.dublinBtn).setOnClickListener(this);
+        renton = new MarkerOptions().position(new LatLng(47.489805, -122.120502)).title("Renton");
+        kirkland = new MarkerOptions().position(new LatLng(47.7301986, -122.1768858)).title("kirkland");
+        everett = new MarkerOptions().position(new LatLng(47.978748, -122.202001)).title("Everett");
+        lynnwood = new MarkerOptions().position(new LatLng(47.819533, -122.32288)).title("Lynnwood");
+        montlake = new MarkerOptions().position(new LatLng(47.7973733, -122.3281771)).title("Montlake  Terrace");
+        kentValley = new MarkerOptions().position(new LatLng(47.385938, -122.258212)).title("Kent valley");
 
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -51,31 +45,17 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
-        mapReady = true;
         map = googleMap;
-        LatLng newYork = new LatLng(40.7484, -73.9857);
-        CameraPosition cameraPosition = CameraPosition.builder().target(newYork).zoom(14).build();
-        map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-    }
-
-    @Override
-    public void onClick(final View v) {
-        if (v.getId() == R.id.seattleBtn) {
-            if (mapReady) {
-                flyTo(SEATTLE);
-            }
-        } else if (v.getId() == R.id.nycBtn) {
-            if (mapReady) {
-                flyTo(NYC);
-            }
-        } else if (v.getId() == R.id.dublinBtn) {
-            if (mapReady) {
-                flyTo(DUBLIN);
-            }
-        }
+        map.addMarker(renton);
+        map.addMarker(kirkland);
+        map.addMarker(everett);
+        map.addMarker(lynnwood);
+        map.addMarker(montlake);
+        map.addMarker(kentValley);
+        flyTo(SEATTLE);
     }
 
     private void flyTo(final CameraPosition cameraPosition) {
-        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 10000, null);
+        map.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 }

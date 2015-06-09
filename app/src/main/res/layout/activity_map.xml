@@ -5,34 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/seattleBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Seattle"/>
-
-        <Button
-            android:id="@+id/nycBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="New York"/>
-
-        <Button
-            android:id="@+id/dublinBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Dublin"/>
-
-    </LinearLayout>
-
     <fragment
         android:id="@+id/map"
         android:layout_width="match_parent"
