@@ -45,4 +45,10 @@
         android:layout_height="wrap_content"
         android:text="Launch StreetView Activity"/>
 
+    <Button
+        android:id="@+id/launch_sign_in_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Launch SignIn Activity"/>
+
 </LinearLayout>
