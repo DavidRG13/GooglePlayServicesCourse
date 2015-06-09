@@ -15,14 +15,35 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
     private boolean mapReady;
     private GoogleMap map;
 
+    private static final CameraPosition NYC = CameraPosition.builder()
+        .target(new LatLng(40.7127, 74.0059))
+        .zoom(21)
+        .bearing(0)
+        .tilt(45)
+        .build();
+
+    private static final CameraPosition SEATTLE = CameraPosition.builder()
+        .target(new LatLng(47.6204, -122.3491))
+        .zoom(17)
+        .bearing(0)
+        .tilt(45)
+        .build();
+
+    private static final CameraPosition DUBLIN = CameraPosition.builder()
+        .target(new LatLng(53.3478, 6.2597))
+        .zoom(17)
+        .bearing(90)
+        .tilt(45)
+        .build();
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        findViewById(R.id.mapBtn).setOnClickListener(this);
-        findViewById(R.id.satelliteBtn).setOnClickListener(this);
-        findViewById(R.id.hybridBtn).setOnClickListener(this);
+        findViewById(R.id.seattleBtn).setOnClickListener(this);
+        findViewById(R.id.nycBtn).setOnClickListener(this);
+        findViewById(R.id.dublinBtn).setOnClickListener(this);
 
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -39,18 +60,22 @@ public class MapActivity extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public void onClick(final View v) {
-        if (v.getId() == R.id.mapBtn) {
+        if (v.getId() == R.id.seattleBtn) {
             if (mapReady) {
-                map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                flyTo(SEATTLE);
             }
-        } else if (v.getId() == R.id.satelliteBtn) {
+        } else if (v.getId() == R.id.nycBtn) {
             if (mapReady) {
-                map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                flyTo(NYC);
             }
-        } else if (v.getId() == R.id.hybridBtn) {
+        } else if (v.getId() == R.id.dublinBtn) {
             if (mapReady) {
-                map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                flyTo(DUBLIN);
             }
         }
+    }
+
+    private void flyTo(final CameraPosition cameraPosition) {
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 10000, null);
     }
 }
