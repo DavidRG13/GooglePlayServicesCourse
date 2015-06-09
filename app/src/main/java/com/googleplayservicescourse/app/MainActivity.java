@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         findViewById(R.id.daily_special).setOnClickListener(this);
         findViewById(R.id.launch_ads_activity).setOnClickListener(this);
         findViewById(R.id.launch_maps_activity).setOnClickListener(this);
+        findViewById(R.id.launch_street_view_activity).setOnClickListener(this);
 
 
         TagManager tagManager = ((MyApplication) getApplication()).getTagManager();
@@ -156,6 +157,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             startActivity(new Intent(this, AdsActivity.class));
         } else if (id == R.id.launch_maps_activity) {
             startActivity(new Intent(this, MapActivity.class));
+        } else if (id == R.id.launch_street_view_activity) {
+            startActivity(new Intent(this, StreetViewActivity.class));
         }
     }
 
