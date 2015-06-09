@@ -33,4 +33,10 @@
         android:layout_height="wrap_content"
         android:text="Launch Ads Activity"/>
 
+    <Button
+        android:id="@+id/launch_maps_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Launch Maps Activity"/>
+
 </LinearLayout>
